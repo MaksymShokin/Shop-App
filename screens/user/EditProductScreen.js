@@ -5,7 +5,8 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -28,8 +29,25 @@ const EditProductScreen = props => {
   const [description, setDescription] = useState(
     editedProduct ? editedProduct.description : ''
   );
+  const [isTitleValid, setIsTitleValid] = useState(false);
+
+  const onTitleChangeHandler = text => {
+    if (text.trim().length === 0) {
+      setIsTitleValid(false)
+    } else {
+      setIsTitleValid(true)
+    }
+
+    setTitle(text)
+  };
 
   const submitHandler = useCallback(() => {
+    if (!isTitleValid) {
+      Alert.alert(
+        'Wrong input', 'Please check errors', [{text: 'Okay'}]
+      );
+      return;
+    }
     if (editedProduct) {
       dispatch(
         productsActions.updateProduct(prodId, title, description, imageUrl)
@@ -54,8 +72,9 @@ const EditProductScreen = props => {
           <TextInput
             style={styles.input}
             value={title}
-            onChangeText={text => setTitle(text)}
+            onChangeText={text => onTitleChangeHandler(text)}
           />
+          {!isTitleValid && <View><Text>Please review your title</Text></View>}
         </View>
         <View style={styles.formControl}>
           <Text style={styles.label}>Image URL</Text>
@@ -72,6 +91,7 @@ const EditProductScreen = props => {
               style={styles.input}
               value={price}
               onChangeText={text => setPrice(text)}
+              keyboardType='decimal-pad'
             />
           </View>
         )}
