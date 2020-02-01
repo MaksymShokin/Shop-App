@@ -38,6 +38,14 @@ const ProductsOverviewScreen = props => {
     )
   }
 
+  if (!isLoading && products.length === 0) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size='large' color={Colors.primary}/>
+      </View>
+    )
+  }
+
   return (
     <FlatList
       data={products}

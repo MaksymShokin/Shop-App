@@ -13,11 +13,10 @@ export const fetchProduct = () => {
   return async dispatch => {
     // any async code you want!
     const response = await fetch(
-      'https://rn-shop-app-8fd49.firebaseio.com/products.json'
+      'https://rn-shop-app-8fd49.firebaseio.com/product.json'
     );
 
     const resData = await response.json();
-    console.log(resData)
     const loadedProducts = [];
 
     for (const key in resData) {
@@ -31,7 +30,7 @@ export const fetchProduct = () => {
           resData[key].price
         )
       );
-    console.log(loadedProducts)
+
     }
 
     dispatch({ type: SET_PRODUCT, products: loadedProducts });
