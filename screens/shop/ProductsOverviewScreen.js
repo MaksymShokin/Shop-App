@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, Button, Platform, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -15,19 +15,21 @@ const ProductsOverviewScreen = props => {
   const products = useSelector(state => state.products.availableProducts);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      setIsLoading(true);
-      try {
-        await dispatch(productActions.fetchProduct());
-      } catch (error) {
-        setError(error.message)
-      }
+  const loadProduct = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(productActions.fetchProduct());
+    } catch (error) {
+      setError(error.message)
+    }
 
-      setIsLoading(false);
-    };
+    setIsLoading(false);
+  }, [dispatch, setIsLoading, setError]);
+
+  useEffect(() => {
     loadProduct();
-  }, [dispatch]);
+  }, [dispatch, loadProduct]);
 
   const selectItemHandler = (id, title) => {
     props.navigation.navigate('ProductDetail', {
@@ -40,6 +42,7 @@ const ProductsOverviewScreen = props => {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>An error!</Text>
+        <Button title='Try again' onPress={loadProduct} color={Colors.primary}/>
       </View>
     )
   }
