@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { FlatList, Button, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Button, Platform, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
@@ -10,11 +10,17 @@ import * as productActions from '../../store/actions/products';
 import Colors from '../../constants/Colors';
 
 const ProductsOverviewScreen = props => {
+  const [isLoading, setIsLoading] = useState(false);
   const products = useSelector(state => state.products.availableProducts);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(productActions.fetchProduct())
+    const loadProduct = async () => {
+      setIsLoading(true);
+      await dispatch(productActions.fetchProduct());
+      setIsLoading(false);
+    };
+    loadProduct();
   }, [dispatch]);
 
   const selectItemHandler = (id, title) => {
@@ -23,6 +29,14 @@ const ProductsOverviewScreen = props => {
       productTitle: title
     });
   };
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size='large' color={Colors.primary}/>
+      </View>
+    )
+  }
 
   return (
     <FlatList
