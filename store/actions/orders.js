@@ -1,6 +1,44 @@
 import { CREATE_PRODUCT } from './products';
+import Product from '../../models/product';
+import Order from '../../models/order';
 
 export const ADD_ORDER = 'ADD_ORDER';
+export const SET_ORDERS = 'SET_ORDERS';
+
+export const fetchOrders = () => {
+  return async dispatch => {
+    try {
+      const response = await fetch(
+        'https://rn-shop-app-8fd49.firebaseio.com/orders/u1.json'
+      );
+
+      if (!response.ok) {
+        throw new Error('something wrong')
+      }
+
+      const resData = await response.json();
+      const loadedOrders = [];
+
+      for (const key in resData) {
+        loadedOrders.push(
+          new Order(
+            key,
+            resData[key].cartItems,
+            resData[key].totalAmount,
+            new Date(resData[key].date)
+          )
+        );
+      }
+
+      dispatch({
+        type: SET_ORDERS,
+        orders: loadedOrders
+      })
+    } catch (error) {
+      throw error
+    }
+  }
+}
 
 export const addOrder = (cartItems, totalAmount) => {
   return async dispatch => {
