@@ -6,10 +6,11 @@ export const ADD_ORDER = 'ADD_ORDER';
 export const SET_ORDERS = 'SET_ORDERS';
 
 export const fetchOrders = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const userId = getState().auth.userId;
       const response = await fetch(
-        'https://rn-shop-app-8fd49.firebaseio.com/orders/u1.json'
+        `https://rn-shop-app-8fd49.firebaseio.com/orders/${userId}.json`
       );
 
       if (!response.ok) {
@@ -17,6 +18,7 @@ export const fetchOrders = () => {
       }
 
       const resData = await response.json();
+      console.log(resData)
       const loadedOrders = [];
 
       for (const key in resData) {
@@ -43,9 +45,10 @@ export const fetchOrders = () => {
 export const addOrder = (cartItems, totalAmount) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    console.log(token)
+    const userId = getState().auth.userId;
+    console.log('userid' + userId)
     const date = new Date();
-    const response = await fetch(`https://rn-shop-app-8fd49.firebaseio.com/orders/u1.json?auth=${token}`, {
+    const response = await fetch(`https://rn-shop-app-8fd49.firebaseio.com/orders/${userId}.json?auth=${token}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -58,6 +61,7 @@ export const addOrder = (cartItems, totalAmount) => {
     });
 
     const responseData = await response.json();
+    console.log(responseData)
 
     dispatch({
       type: ADD_ORDER,

@@ -18,7 +18,8 @@ export const deleteProduct = productId => {
 };
 
 export const fetchProduct = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;
     // any async code you want!
     try {
       const response = await fetch(
@@ -36,17 +37,20 @@ export const fetchProduct = () => {
         loadedProducts.push(
           new Product(
             key,
-            'u1',
+            userId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
             resData[key].price
           )
         );
-
       }
 
-      dispatch({type: SET_PRODUCT, products: loadedProducts});
+      dispatch({
+        type: SET_PRODUCT,
+        products: loadedProducts,
+        userProducts: loadedProducts.filter(product => product.ownerId === userId)
+      });
     } catch (error) {
       throw error
     }
@@ -56,6 +60,7 @@ export const fetchProduct = () => {
 export const createProduct = (title, description, imageUrl, price) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const response = await fetch(`https://rn-shop-app-8fd49.firebaseio.com/products.json?auth=${token}`, {
       method: 'POST',
       headers: {
@@ -65,7 +70,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         title,
         description,
         imageUrl,
-        price
+        price,
+        ownerId: userId
       })
     });
 
@@ -78,7 +84,8 @@ export const createProduct = (title, description, imageUrl, price) => {
         title,
         description,
         imageUrl,
-        price
+        price,
+        ownerId: userId
       }
     })
   };

@@ -50,6 +50,7 @@ const ProductsOverviewScreen = props => {
   };
 
   if (error) {
+    console.log(error)
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text>An error!</Text>
