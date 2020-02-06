@@ -38,7 +38,7 @@ export const fetchOrders = () => {
       throw error
     }
   }
-}
+};
 
 export const addOrder = (cartItems, totalAmount) => {
   return async dispatch => {
