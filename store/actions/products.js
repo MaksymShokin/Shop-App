@@ -37,7 +37,7 @@ export const fetchProduct = () => {
         loadedProducts.push(
           new Product(
             key,
-            userId,
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -94,7 +94,7 @@ export const createProduct = (title, description, imageUrl, price) => {
 export const updateProduct = (id, title, description, imageUrl) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    console.log(token)
+
     await fetch(`https://rn-shop-app-8fd49.firebaseio.com/products/${id}.json?auth=${token}`, {
       method: 'PATCH',
       headers: {
